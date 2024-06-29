@@ -6,17 +6,26 @@ description = "Invoice generator powered with the use of AI Agent made by TaKo A
 authors = ["Maciej Tarasiuk <maciej.tarasiuk@takoai.pl>", "Piotr Kazimierczak <piotr.kazimierczak@takoai.pl>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/takoai-pl/streamlit-invoice-ai.git"
 packages = [
-    { include = "src", from = "." },
+    { include = "frontend", from = "." },
+    { include = "backend", from = "." },
 ]
-
 
 [tool.poetry.dependencies]
 python = "^3.10"
 streamlit = "^1.36.0"
-sqlalchemy = "2.0.25"
-pydantic = "2.7.4"
-
+sqlalchemy = "^2.0.31"
+pydantic = "1.10.13"
+fastapi = "^0.111.0"
+langchain = "0.2.0"
+langchain-community = "0.2.0"
+langchain-openai = "0.1.10"
+langgraph = "0.1.2"
+langserve = { version = ">=0.0.6", extras = ["server"] }
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"
@@ -25,6 +34,7 @@ mypy = "^1.4.1"
 ruff = "^0.0.278"
 black = "^23.7.0"
 syrupy = "^4.0.2"
+types-requests = "2.32.0.20240622"
 
 [build-system]
 requires = ["poetry-core"]

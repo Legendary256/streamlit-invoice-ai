@@ -1,6 +1,6 @@
 .PHONY: all locales licences lint test start
 
-all: locales format_diff licences lint test
+all: locales format_diff licences lint
 
 locales:
 	@echo "Building locales..."
@@ -10,19 +10,24 @@ licences:
 	@echo "Building licences..."
 	./scripts/generate_licences.sh
 
-start: locales
-	@echo "Starting the app..."
-	poetry run streamlit run src/app.py
+start_frontend: locales
+	@echo "Starting the front-end..."
+	poetry run streamlit frontend/app.py --server.port 8501
 
+start_backend: locales
+	@echo "Starting the back-end..."
+	poetry run uvicorn backend.server:app --reload
 
-# Define a variable for the test file path.
+docker_dev:
+	@echo "Building the development Docker image..."
+	docker-compose --env-file .env.dev -f docker-compose.yml -f docker-compose.dev.yml up --build
+
 TEST_FILE ?= tests/
 
 test:
 	@echo "Running tests..."
 	poetry run pytest $(TEST_FILE)
 
-# Define a variable for Python and notebook files.
 PYTHON_FILES=.
 lint format: PYTHON_FILES=.
 lint_diff format_diff: PYTHON_FILES=$(shell git diff --name-only --diff-filter=d main | grep -E '\.py$$|\.ipynb$$')
@@ -39,6 +44,9 @@ format format_diff:
 	poetry run ruff --select I --fix $(PYTHON_FILES)
 	poetry run ruff --select F --fix $(PYTHON_FILES) --ignore F821
 
+docker_prod:
+	@echo "Building the production Docker image..."
+	docker-compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
 ######################
 # HELP

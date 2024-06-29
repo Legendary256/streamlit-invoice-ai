@@ -1,0 +1,40 @@
+version: '3.1'
+
+services:
+  api:
+    build:
+        context: .
+        dockerfile: backend.Dockerfile
+    image: api
+    environment:
+      - POSTGRESQL_CONNECTION_STRING=${POSTGRESQL_CONNECTION_STRING}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    image: streamlit
+    environment:
+      - BASE_URL=${BASE_URL}
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
